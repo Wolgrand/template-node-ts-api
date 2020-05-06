@@ -1,10 +1,9 @@
 import { startOfHour } from 'date-fns';
 import { getCustomRepository } from 'typeorm';
 
-import Appointment from '../models/Appointment';
-import AppointmentsRepository from '../repositories/AppointmentsRepository';
-
-import AppError from '../errors/AppError';
+import AppError from '@shared/errors/AppError';
+import Appointment from '@modules/appointments/infra/typeorm/entities/Appointment';
+import AppointmentsRepository from '@modules/appointments/infra/typeorm/repositories/AppointmentsRepository';
 
 interface Request {
   provider_id: string;
@@ -24,12 +23,11 @@ class CreateAppointmentService {
       throw new AppError('This appointment is not available');
     }
 
-    const appointment = appointmentsRepository.create({
+    const appointment = await appointmentsRepository.create({
       provider_id,
       date: appointmentDate,
     });
 
-    await appointmentsRepository.save(appointment);
     return appointment;
   }
 }
